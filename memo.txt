@@ -1,0 +1,54 @@
+memo.txt
+
+１．
+まずは SKSTableView のサンプルアプリの ViewController の内容をコピペして動作確認
+重複するメソッドはコメントアウト
+
+viewDidLoad 内に　self.tableView.SKSTableViewDelegate = self;　を記述しないとアコーディオンしない
+これで動作する
+
+２．
+次にオリジナルの部分を戻していく
+
+・heightForRowAtIndexPath メソッドはオリジナルを使う
+　最初の引数の型は一応 UITableView から SKSTableView に変更したが、そのままでも問題ないかも知れない
+
+・didSelectRowAtIndexPath メソッドはオリジナルをコメントアウト
+　オリジナルは連合艦隊アプリでは遷移に使用しているため
+　SKSTableView の方も単に NSLog を出力しているだけなので、最終的には不要
+
+・numberOfSectionsInTableView メソッドはオリジナルでは記述していないが
+　SKSTableView を使うには必要な模様
+　表示データにセクションが１つしかないのに２とか入れると以下のエラー
+
+3   gfdb                                0x0000000101372841 -[IphoneSCBuilder tableView:numberOfRowsInSection:] + 58
+4   gfdb                                0x000000010136df19 -[SKSTableView tableView:numberOfRowsInSection:] + 78
+
+・numberOfRowsInSection メソッドは他のメソッドとも関係してくるので単純にオリジナルに置き換えると以下のエラーが出る
+
+5   gfdb                                0x000000010c5f0ade -[SKSTableView expandableCells] + 186
+6   gfdb                                0x000000010c5f1ad8 -[SKSTableView numberOfExpandedSubrowsInSection:] + 53
+7   gfdb                                0x000000010c5f0f9d -[SKSTableView tableView:numberOfRowsInSection:] + 114
+
+
+３．気付き
+・用意する二次元配列は単純に１つ目が最初の項目で、２つ目以降がサブセルの内容として表示される
+・Cell の表示をどうするか
+　cellForRowAtIndexPath は最初のセルの表示指定なので、これは UITableViewCell のサブクラスである
+　XibTableViewCell と SKSTableViewCell をどう織り合いをつけるかの問題で、それ程難しくはないと思う
+■オリジナルの mData で用意されるのは最初の項目だけを集めた１次元の配列
+　それにどうやって、サブセルの内容となるデータを組み合わせた配列を作るかが最初の関門
+
+　まずは二次元配列の作るメソッド
+　次に前もって遷移先のデータを取得できるか
+
+　■サブセルを追加しても右端に矢印が表示されない問題　・・・とりあえず条件分岐をなくして全部のセクションで表示する
+■リクナビアプリの方での問題は、SKSTableView を指定した tableview の indexpath を取得出来ないこと
+
+
+self.contents[indexPath.section][indexPath.row][0])　・・・例　呉海軍工廠
+self.contents[indexPath.section][indexPath.row]　　・・・呉海軍工廠のデータ
+self.contents[indexPath.section]　　　　　　　　　・・・呉海軍工廠も含めた全体のデータ
+
+self.contents[section]　　　　　　　・・・二次元配列全体
+[self.contents[section] count]　　　・・・配列の数
