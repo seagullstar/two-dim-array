@@ -19,6 +19,7 @@
 
 @implementation IphoneSCBuilder
 @synthesize mData;
+@synthesize mData2;
 
 #pragma mark -
 - (BOOL)prefersStatusBarHidden {
@@ -29,29 +30,30 @@
   [super didReceiveMemoryWarning];
 }
 
-- (NSArray *)contents {
-  if (!_contents) {
-    _contents = @[
-      @[
-        @[ @"呉海軍工廠", @"扶桑", @"長門" ],
-        @[ @"横須賀海軍工廠", @"比叡", @"山城", @"陸奥", @"飛龍", @"翔鶴", @"信濃" ],
-        @[ @"佐世保海軍工廠", @"龍田", @"球磨" ],
-      ]
-    ];
-  }
-
-  // 二次元配列の作り方（上記と同じ）
-  //  NSArray *ar = [NSArray arrayWithObjects:[NSArray arrayWithObjects:[NSArray arrayWithObjects:@"呉海軍工廠", @"扶桑", @"長門", nil],
-  //                                                                    [NSArray arrayWithObjects:@"横須賀海軍工廠", @"比叡", @"山城", @"陸奥",
-  //                                                                                              @"飛龍", @"翔鶴", @"信濃", nil],
-  //                                                                    [NSArray arrayWithObjects:@"佐世保海軍工廠", @"龍田", @"球磨", nil], nil],
-  //                                          nil];
-  //  NSLog(@"1. = %@", ar);
-  //  int num[] = {[ar[0][0] intValue], [ar[1][2] intValue]}; //オブジェクト型をint型に変換する
-  //  NSLog(@"%@ %d %d", ar[2][2], num[0], num[1]);
-
-  return _contents;
-}
+//- (NSArray *)contents {
+//  if (!_contents) {
+//    _contents = @[
+//      @[
+//        @[ @"呉海軍工廠", @"扶桑", @"長門" ],
+//        @[ @"横須賀海軍工廠", @"比叡", @"山城", @"陸奥", @"飛龍", @"翔鶴", @"信濃" ],
+//        @[ @"佐世保海軍工廠", @"龍田", @"球磨" ],
+//      ]
+//    ];
+//  }
+//
+//  // 二次元配列の作り方（上記と同じ）
+//  //  NSArray *ar = [NSArray arrayWithObjects:[NSArray arrayWithObjects:[NSArray arrayWithObjects:@"呉海軍工廠", @"扶桑", @"長門", nil],
+//  //                                                                    [NSArray arrayWithObjects:@"横須賀海軍工廠", @"比叡", @"山城", @"陸奥",
+//  //                                                                                              @"飛龍", @"翔鶴", @"信濃", nil],
+//  //                                                                    [NSArray arrayWithObjects:@"佐世保海軍工廠", @"龍田", @"球磨", nil], nil],
+//  //                                          nil];
+//  //  NSLog(@"1. = %@", ar);
+//  //  int num[] = {[ar[0][0] intValue], [ar[1][2] intValue]}; //オブジェクト型をint型に変換する
+//  //  NSLog(@"%@ %d %d", ar[2][2], num[0], num[1]);
+//
+//  // NSLog(@"%@", _contents);
+//  return _contents;
+//}
 
 #pragma mark - Managing the View
 - (void)viewDidLoad {
@@ -62,6 +64,7 @@
 
   NSString *sql = @"select * from gfsub130 where d2 ='建艦地'";
   mData = [DataCollection getDataCollection:sql saveStrings:self.svStr];
+  // NSLog(@"%@", mData);
 
   //  NSArray *ar3 = [[NSArray alloc] initWithObjects:@"ID", @"NAME", @"PRICE", nil];
   //
@@ -78,31 +81,6 @@
   //  }
 }
 
-// 二次元配列用意
-//- (NSArray *)contents {
-//  if (!_contents) {
-//    _contents = @[
-//      @[
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//        mData,
-//      ]
-//    ];
-//  }
-//  return _contents;
-//}
-
 #pragma mark - Responding to View Events
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
@@ -115,16 +93,17 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return [self.contents count];
+  // return [self.contents count];
+  return 1;
 }
 
 #pragma mark - Table view data source
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  // return [mData count]; // 仮データの方を必要な分だけ記述しておけば、このまま使用可能
-  return 3;
   // return [self.contents[section] count];
+  return [mData count];
 }
 
+// original
 //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //  XibTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"scbuilderCell" forIndexPath:indexPath];
 //  Data *data = [mData objectAtIndex:indexPath.row];
@@ -144,7 +123,6 @@
 
   Data *data = [mData objectAtIndex:indexPath.row];
   cell.textLabel.text = data.d5;
-
   // cell.textLabel.text = self.contents[indexPath.section][indexPath.row][0];
   //  if ((indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 0)) || (indexPath.section == 1 && (indexPath.row == 0 || indexPath.row == 2)))
   //    cell.expandable = YES;
@@ -167,6 +145,7 @@
   }
 }
 
+// original
 //- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 //  Data *data = [mData objectAtIndex:indexPath.row];
 //  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"IphoneListView" bundle:nil];
@@ -187,10 +166,13 @@
 #pragma mark - UITableViewDataSource
 // SKSTableView  // count numberOfSubRows
 - (NSInteger)tableView:(SKSTableView *)tableView numberOfSubRowsAtIndexPath:(NSIndexPath *)indexPath {
-  return [self.contents[indexPath.section][indexPath.row] count] - 1;
+  // return [self.contents[indexPath.section][indexPath.row] count] - 1;
+  Data *data = [mData objectAtIndex:indexPath.row];
+  mData2 = [DataCollection getDataCollection:data.d3];
+  return [mData2 count];
 }
 
-// SKSTableView  //
+// SKSTableView
 - (BOOL)tableView:(SKSTableView *)tableView shouldExpandSubRowsOfCellAtIndexPath:(NSIndexPath *)indexPath {
   if (indexPath.section == 1 && indexPath.row == 0) {
     return YES;
@@ -206,8 +188,9 @@
 
   if (!cell)
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-
-  cell.textLabel.text = [NSString stringWithFormat:@"%@", self.contents[indexPath.section][indexPath.row][indexPath.subRow]];
+  Data *data = [mData2 objectAtIndex:indexPath.subRow - 1];
+  cell.textLabel.text = data.a3;
+  // cell.textLabel.text = [NSString stringWithFormat:@"%@", self.contents[indexPath.section][indexPath.row][indexPath.subRow]];
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
   return cell;

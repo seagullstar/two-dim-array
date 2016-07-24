@@ -22,5 +22,6 @@
 
 @property(nonatomic, strong) NSString *svStr;
 @property(nonatomic, strong) NSMutableArray *mData;
+@property(nonatomic, strong) NSMutableArray *mData2;
 
 @end
